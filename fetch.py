@@ -46,9 +46,8 @@ artist_request = {
 }
 
 # This gives us a big XML file containing the top n artists
-print("Fetching top ", NUM_ARTISTS, " artists... "),
+print("Fetching top ", NUM_ARTISTS, " artists... ")
 top_artists = rs.get('http://ws.audioscrobbler.com/2.0/', params=artist_request)
-print("done!"),
 
 # Parse all of the artists found in the .xml, store then in a list
 print("Parsing XML...")
