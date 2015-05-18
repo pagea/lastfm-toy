@@ -47,6 +47,9 @@ def get_top_artists(n):
     }
     print("Fetching top ", NUM_ARTISTS, " artists... ")
     top_artists = rs.get('http://ws.audioscrobbler.com/2.0/', params=artist_request)
+    # For purposes of fulfilling the assignment, we save this XML to disk.
+    with open("raw.xml", "w") as raw:
+        raw.write(top_artists.text)
     return top_artists
 
 def parse_top_artists(xml):
@@ -63,7 +66,7 @@ def get_top_artist_tags(filepath, artists):
     """
    
     print("Fetching top tags...")
-    with open('artist_tags2.csv', 'w', newline='') as csvfile:
+    with open('artist_tags.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=' ', quotechar='|')
         writer.writerow(["artist", "tags"])
         for idx, artist in enumerate(artists):
@@ -72,6 +75,7 @@ def get_top_artist_tags(filepath, artists):
             writer.writerow(writeout)
             print(str(writeout), '\n')
             print(idx+1, '/', NUM_ARTISTS)
+            sleep(0.2) # respect last.fm's rate limit
 
 if __name__ == '__main__':
     top_artists_xml = get_top_artists(NUM_ARTISTS)

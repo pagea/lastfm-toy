@@ -4,7 +4,6 @@ import sys
 
 from collections import OrderedDict
 from operator import itemgetter
-#TODO: Parameter documentation. Return type documentation.
 
 
 def load_tag_data(filepath):
