@@ -37,34 +37,43 @@ def get_top_tags(artist):
         tags.append(tag.text)
     return tags
 
-# Parameters for requesting the top artists on last.fm
-artist_request = {
-    'method' : "chart.gettopartists",
-    'api_key': API_KEY,
-    'limit': str(NUM_ARTISTS),
-    'api_key': API_KEY,
-}
+def get_top_artists(n):
+    # Parameters for requesting the top n charting artists
+    artist_request = {
+        'method' : "chart.gettopartists",
+        'api_key': API_KEY,
+        'limit': str(n),
+        'api_key': API_KEY,
+    }
+    print("Fetching top ", NUM_ARTISTS, " artists... ")
+    top_artists = rs.get('http://ws.audioscrobbler.com/2.0/', params=artist_request)
+    return top_artists
 
-# This gives us a big XML file containing the top n artists
-print("Fetching top ", NUM_ARTISTS, " artists... ")
-top_artists = rs.get('http://ws.audioscrobbler.com/2.0/', params=artist_request)
+def parse_top_artists(xml):
+    print("Parsing XML...")
+    names = []
+    top_artists_root = ET.ElementTree(ET.fromstring(xml.text)).getroot()
+    for name in top_artists_root.iter('name'):
+        names.append(name.text)
+    return names
 
-# Parse all of the artists found in the .xml, store then in a list
-print("Parsing XML...")
-names = []
-top_artists_root = ET.ElementTree(ET.fromstring(top_artists.text)).getroot()
-for name in top_artists_root.iter('name'):
-    names.append(name.text)
+def get_top_artist_tags(filepath, artists):
+    """ Get top tags for every artist. Store names and their associated tags in a
+    CSV file.
+    """
+   
+    print("Fetching top tags...")
+    with open('artist_tags2.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter=' ', quotechar='|')
+        writer.writerow(["artist", "tags"])
+        for idx, artist in enumerate(artists):
+            tags = get_top_tags(artist)
+            writeout = [artist.replace(' ', '_'), ', '.join(tags)]
+            writer.writerow(writeout)
+            print(str(writeout), '\n')
+            print(idx+1, '/', NUM_ARTISTS)
 
-# Get top tags for every artist. Store names and their associated tags in a CSV
-# file.
-print("Fetching top tags...")
-with open('artist_tags.csv', 'w', newline='') as csvfile:
-    writer = csv.writer(csvfile, delimiter=' ', quotechar='|')
-    writer.writerow(["artist", "tags"])
-    for idx, name in enumerate(names):
-        tags = get_top_tags(name)
-        writeout = [name.replace(' ', '_'), ', '.join(tags)]
-        writer.writerow(writeout)
-        print(str(writeout), '\n')
-        print(idx+1, '/', NUM_ARTISTS)
+if __name__ == '__main__':
+    top_artists_xml = get_top_artists(NUM_ARTISTS)
+    top_artists = parse_top_artists(top_artists_xml)
+    get_top_artist_tags('artist_tags2.csv', top_artists)
