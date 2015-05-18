@@ -66,7 +66,7 @@ def get_top_artist_tags(filepath, artists):
     """
    
     print("Fetching top tags...")
-    with open('artist_tags.csv', 'w', newline='') as csvfile:
+    with open(filepath, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=' ', quotechar='|')
         writer.writerow(["artist", "tags"])
         for idx, artist in enumerate(artists):
@@ -80,4 +80,4 @@ def get_top_artist_tags(filepath, artists):
 if __name__ == '__main__':
     top_artists_xml = get_top_artists(NUM_ARTISTS)
     top_artists = parse_top_artists(top_artists_xml)
-    get_top_artist_tags('artist_tags2.csv', top_artists)
+    get_top_artist_tags('artist_tags.csv', top_artists)
