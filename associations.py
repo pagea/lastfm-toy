@@ -9,7 +9,10 @@ from operator import itemgetter
 
 def load_tag_data(filepath):
     """Load all of our artist and tag information from a CSV file and put it
-    into a hash table of the following form:
+    into a dictionary.
+
+    :param filepath: The path to our CSV data.
+    :rtype: A hash table of the following form:
     {"Artist_Name" : ["tag1", "tag2", "tag3", ... ]}
     """
 
@@ -31,6 +34,10 @@ def load_tag_data(filepath):
 def get_similar_tags(tag, tagdata):
     """Return a dict of tags mapped to co-occurring tags ranked by their
     similarity.
+
+    :param tag: A string containing a genre.
+    :param tagdata: Parsed and loaded CSV file. See load_tag_data.
+    :rtype: A list of pairs containing (tag, similarity score).
     """
     
     # Find co-occurring tags and count how many times we see them throughout the
@@ -54,17 +61,21 @@ def get_similar_tags(tag, tagdata):
     return sorted(associated.items(), key=lambda x:x[1], reverse=True)
 
 def get_similar_artists(artist_name, tagdata):
-    # Get the tags from the artist we're analyzing
+    """Find artists similar to the input artist.
+    
+    :param artist_name: A string containing the name of an artist. Multi-word
+    artist names should be separated by underscores.
+    :param tagdata: Parsed and loaded CSV file. See load_tag_data.
+    :rtype: A list of pairs containing (artist, similarity score).
+    """
     try:
         artist_tags = tagdata[artist_name.lower()]
     except KeyError:
         print("\nArtist not found.")
         sys.exit()
 
-    # To find artists similar to, say, Nirvana, we retrieve Nirvana's
-    # tags and intersect them with everyone else's tags in our dataset. This
-    # effectively finds all of the tags Nirvana has in common with every
-    # artist.
+    # Find which tags our target artist has in common with other artists
+    # throughout the database.
     intersections = {}
     for artist, tags in tagdata.items():
         intersections[artist] = set(artist_tags).intersection(tagdata[artist])
