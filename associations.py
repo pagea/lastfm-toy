@@ -58,7 +58,8 @@ def get_similar_artists(artist_name, tagdata):
     try:
         artist_tags = tagdata[artist_name.lower()]
     except KeyError:
-        print("Artist not found.")
+        print("\nArtist not found.")
+        sys.exit()
 
     # To find artists similar to, say, Nirvana, we retrieve Nirvana's
     # tags and intersect them with everyone else's tags in our dataset. This
@@ -82,4 +83,4 @@ if __name__ == '__main__':
     tagdata = load_tag_data("artist_tags.csv")
     # We only show the top 20 results for each function.
     print("Similar tags:\n", get_similar_tags(sys.argv[1], tagdata)[:20])
-    print("Similar artists:\n", get_similar_artists(sys.argv[2], tagdata)[:20])
+    print("\nSimilar artists:\n", get_similar_artists(sys.argv[2], tagdata)[:20])
