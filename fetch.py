@@ -41,7 +41,6 @@ def get_top_artists(n):
     # Parameters for requesting the top n charting artists
     artist_request = {
         'method' : "chart.gettopartists",
-        'api_key': API_KEY,
         'limit': str(n),
         'api_key': API_KEY,
     }
